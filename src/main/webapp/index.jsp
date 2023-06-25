@@ -2,7 +2,12 @@
 <%--<%@ page  %>--%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <c:set var="language" value="en" scope="session"/>
-<html>
+
+<!DOCTYPE html>
+<html lang="en" xml:lang="en">
+<head>
+    <title>Index page</title>
+</head>
 <body>
 <%--<c:out value="${pageContext.request.contextPath}"/>--%>
 <jsp:forward page="/login"/>
