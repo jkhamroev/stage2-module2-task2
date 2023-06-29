@@ -32,20 +32,19 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
-        String url = "/login.jsp";
         String login = request.getParameter("login");
         String password = request.getParameter("password");
         Users users = Users.getInstance();
         if (users.getUsers().contains(login) && (password == null || password.trim().isEmpty())) {
             request.getSession().setAttribute("user", 1);
             try {
-                response.sendRedirect(request.getContextPath() + "/user/hello.jsp");
-            } catch (IOException e) {
+                request.getServletContext().getRequestDispatcher("/user/hello.jsp").forward(request, response);
+            } catch (ServletException | IOException e) {
                 e.printStackTrace();
             }
         } else {
             try {
-                request.getServletContext().getRequestDispatcher(url).forward(request, response);
+                request.getServletContext().getRequestDispatcher("/login.jsp").forward(request, response);
             } catch (ServletException | IOException e) {
                 e.printStackTrace();
             }
