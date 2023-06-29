@@ -13,17 +13,16 @@ import java.io.IOException;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
-    private ServletConfig config;
 
     @Override
-    public void init(ServletConfig config) {
-        this.config = config;
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-        String url = session.getAttribute("user") != null ? "/login.jsp" : "/user/hello.jsp";
+        String url = session.getAttribute("user") == null ? "/login.jsp" : "/user/hello.jsp";
         try {
             response.sendRedirect(request.getContextPath() + url);
         } catch (IOException e) {
@@ -37,7 +36,7 @@ public class LoginServlet extends HttpServlet {
         String login = request.getParameter("login");
         String password = request.getParameter("password");
         Users users = Users.getInstance();
-        if (users.getUsers().contains(login) && password.trim().isEmpty()) {
+        if (users.getUsers().contains(login) && (password == null || password.trim().isEmpty())) {
             request.getSession().setAttribute("user", 1);
             try {
                 response.sendRedirect(request.getContextPath() + "/user/hello.jsp");
@@ -46,7 +45,7 @@ public class LoginServlet extends HttpServlet {
             }
         } else {
             try {
-                config.getServletContext().getRequestDispatcher(url).forward(request, response);
+                request.getServletContext().getRequestDispatcher(url).forward(request, response);
             } catch (ServletException | IOException e) {
                 e.printStackTrace();
             }

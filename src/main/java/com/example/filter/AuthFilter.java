@@ -13,7 +13,6 @@ public class AuthFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) {
         // ignore
-        throw new UnsupportedOperationException();
     }
 
     @Override
