@@ -13,16 +13,17 @@ public class LogoutServlet extends HttpServlet {
 
     @Override
     public void init(ServletConfig config) {
-
+        // ignore
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-        req.getSession().removeAttribute("user");
-        req.getSession().invalidate();
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+        request.getSession().removeAttribute("user");
+        request.getSession().invalidate();
         try {
-            req.getServletContext().getRequestDispatcher("/login.jsp").forward(req, resp);
-        } catch (ServletException | IOException e) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

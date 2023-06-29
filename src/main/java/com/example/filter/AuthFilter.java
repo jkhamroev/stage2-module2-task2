@@ -2,26 +2,38 @@ package com.example.filter;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebFilter(urlPatterns = "/user/*")
 public class AuthFilter implements Filter {
+
     @Override
     public void init(FilterConfig filterConfig) {
+        // ignore
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         HttpSession session = httpServletRequest.getSession();
-        try {
-            String url = session.getAttribute("user") == null ? "/login.jsp" : "/user/hello.jsp";
-            httpServletRequest.getServletContext().getRequestDispatcher(url).forward(request, response);
-
-        } catch (NullPointerException e) {
-            httpServletRequest.getServletContext().getRequestDispatcher("/login.jsp").forward(request, response);
+        if (session.getAttribute("user") == null) {
+            try {
+                httpServletResponse.sendRedirect(httpServletRequest.getContextPath() + "/login.jsp");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                filterChain.doFilter(request, response);
+            } catch (ServletException | IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

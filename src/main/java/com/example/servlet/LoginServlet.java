@@ -13,36 +13,43 @@ import java.io.IOException;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
+    private ServletConfig config;
+
     @Override
     public void init(ServletConfig config) {
+        this.config = config;
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-        HttpSession session = req.getSession();
-        String url = session.getAttribute("user") == null ? "/login.jsp" : "/user/hello.jsp";
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession();
+        String url = session.getAttribute("user") != null ? "/login.jsp" : "/user/hello.jsp";
         try {
-            req.getServletContext().getRequestDispatcher(url).forward(req, resp);
-        } catch (ServletException | IOException e) {
+            response.sendRedirect(request.getContextPath() + url);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         String url = "/login.jsp";
-        String login = req.getParameter("login");
-        String password = req.getParameter("password");
+        String login = request.getParameter("login");
+        String password = request.getParameter("password");
         Users users = Users.getInstance();
-        if (users.getUsers().contains(login) && !password.trim().isEmpty()) {
-            url = "/user/hello.jsp";
-            req.getSession().setAttribute("user", 1);
-        }
-
-        try {
-            req.getServletContext().getRequestDispatcher(url).forward(req, resp);
-        } catch (ServletException | IOException e) {
-            e.printStackTrace();
+        if (users.getUsers().contains(login) && password.trim().isEmpty()) {
+            request.getSession().setAttribute("user", 1);
+            try {
+                response.sendRedirect(request.getContextPath() + "/user/hello.jsp");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                config.getServletContext().getRequestDispatcher(url).forward(request, response);
+            } catch (ServletException | IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
