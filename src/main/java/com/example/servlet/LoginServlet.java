@@ -3,6 +3,7 @@ package com.example.servlet;
 import com.example.Users;
 
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -14,9 +15,10 @@ import java.io.IOException;
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
 
+    private static ServletContext context;
     @Override
     public void init(ServletConfig config) throws ServletException {
-        super.init(config);
+        context  = config.getServletContext();
     }
 
     @Override
@@ -38,13 +40,13 @@ public class LoginServlet extends HttpServlet {
         if (users.getUsers().contains(login) && (password == null || password.trim().isEmpty())) {
             request.getSession().setAttribute("user", 1);
             try {
-                request.getServletContext().getRequestDispatcher("/user/hello.jsp").forward(request, response);
+                context.getRequestDispatcher("/user/hello.jsp").forward(request, response);
             } catch (ServletException | IOException e) {
                 e.printStackTrace();
             }
         } else {
             try {
-                request.getServletContext().getRequestDispatcher("/login.jsp").forward(request, response);
+                context.getRequestDispatcher("/login.jsp").forward(request, response);
             } catch (ServletException | IOException e) {
                 e.printStackTrace();
             }
