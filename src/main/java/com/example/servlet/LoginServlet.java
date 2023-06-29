@@ -17,7 +17,7 @@ public class LoginServlet extends HttpServlet {
 
     private static ServletContext context;
     @Override
-    public void init(ServletConfig config) throws ServletException {
+    public void init(ServletConfig config) {
         context  = config.getServletContext();
     }
 
@@ -37,8 +37,8 @@ public class LoginServlet extends HttpServlet {
         String login = request.getParameter("login");
         String password = request.getParameter("password");
         Users users = Users.getInstance();
-        if (users.getUsers().contains(login) && (password != null && !password.trim().isEmpty())) {
-            request.getSession().setAttribute("user", 1);
+        if (users.getUsers().contains(login) && (password == null || password.trim().isEmpty())) {
+            request.getSession().setAttribute("user", login);
             try {
                 context.getRequestDispatcher("/user/hello.jsp").forward(request, response);
             } catch (ServletException | IOException e) {
